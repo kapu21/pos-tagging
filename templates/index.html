@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Tagging with Colors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>英文品詞着色</h1>
+    <textarea id="inputText" rows="5" cols="60"></textarea><br><br>
+    <button onclick="analyzeText()">解析</button>
+    <div id="output"></div>
+
+    <script>
+        function analyzeText() {
+            const text = document.getElementById('inputText').value;
+            
+            fetch('/parse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let output = '';
+                data.forEach(token => {
+                    output += `<span class="token" style="color:${token.color}">${token.text}</span> `;
+                });
+                document.getElementById('output').innerHTML = output;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
